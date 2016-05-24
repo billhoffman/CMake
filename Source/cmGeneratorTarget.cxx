@@ -2415,6 +2415,13 @@ std::vector<std::string> cmGeneratorTarget::GetIncludeDirectories(
 
   cmDeleteAll(linkInterfaceIncludeDirectoriesEntries);
 
+  // Add standard include directories for this language.
+  std::string const standardIncludesVar =
+    "CMAKE_" + lang + "_STANDARD_INCLUDE_DIRECTORIES";
+  std::string const standardIncludes =
+    this->Makefile->GetSafeDefinition(standardIncludesVar);
+  cmSystemTools::ExpandListArgument(standardIncludes, includes);
+
   return includes;
 }
 

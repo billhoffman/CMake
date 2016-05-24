@@ -642,13 +642,15 @@ void cmLocalUnixMakefileGenerator3::WriteMakeVariables(
   makefileStream
     << "# The CMake executable.\n"
     << "CMAKE_COMMAND = "
-    << this->ConvertShellCommand(cmSystemTools::GetCMakeCommand(), cmOutputConverter::FULL)
+    << this->ConvertShellCommand(cmSystemTools::GetCMakeCommand(),
+                                 cmOutputConverter::FULL)
     << "\n"
     << "\n";
   makefileStream
     << "# The command to remove a file.\n"
     << "RM = "
-    << this->ConvertShellCommand(cmSystemTools::GetCMakeCommand(), cmOutputConverter::FULL)
+    << this->ConvertShellCommand(cmSystemTools::GetCMakeCommand(),
+                                 cmOutputConverter::FULL)
     << " -E remove -f\n"
     << "\n";
   makefileStream
@@ -658,13 +660,17 @@ void cmLocalUnixMakefileGenerator3::WriteMakeVariables(
   makefileStream
     << "# The top-level source directory on which CMake was run.\n"
     << "CMAKE_SOURCE_DIR = "
-    << this->Convert(this->GetSourceDirectory(), cmOutputConverter::FULL, cmOutputConverter::SHELL)
+    << this->Convert(this->GetSourceDirectory(),
+                     cmOutputConverter::FULL,
+                     cmOutputConverter::SHELL)
     << "\n"
     << "\n";
   makefileStream
     << "# The top-level build directory on which CMake was run.\n"
     << "CMAKE_BINARY_DIR = "
-    << this->Convert(this->GetBinaryDirectory(), cmOutputConverter::FULL, cmOutputConverter::SHELL)
+    << this->Convert(this->GetBinaryDirectory(),
+                     cmOutputConverter::FULL,
+                     cmOutputConverter::SHELL)
     << "\n"
     << "\n";
   /* clang-format on */

@@ -2420,7 +2420,12 @@ std::vector<std::string> cmGeneratorTarget::GetIncludeDirectories(
     "CMAKE_" + lang + "_STANDARD_INCLUDE_DIRECTORIES";
   std::string const standardIncludes =
     this->Makefile->GetSafeDefinition(standardIncludesVar);
+  std::vector<std::string>::size_type const before = includes.size();
   cmSystemTools::ExpandListArgument(standardIncludes, includes);
+  for (std::vector<std::string>::iterator i = includes.begin() + before;
+       i != includes.end(); ++i) {
+    cmSystemTools::ConvertToUnixSlashes(*i);
+  }
 
   return includes;
 }

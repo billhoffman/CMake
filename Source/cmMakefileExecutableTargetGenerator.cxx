@@ -187,6 +187,10 @@ void cmMakefileExecutableTargetGenerator::WriteExecutableRule(bool relink)
     this->LocalGenerator->AppendFlags(
       linkFlags, this->Makefile->GetDefinition(export_flag_var));
   }
+  if(this->GeneratorTarget->GetProperty("LINK_WHAT_YOU_USE")) {
+    this->LocalGenerator->AppendFlags(linkFlags,
+                                      " -Wl,--no-as-needed");
+  }
 
   // Add language feature flags.
   this->AddFeatureFlags(flags, linkLanguage);
@@ -397,7 +401,18 @@ void cmMakefileExecutableTargetGenerator::WriteExecutableRule(bool relink)
     commands.insert(commands.end(), commands1.begin(), commands1.end());
     commands1.clear();
   }
-
+  if(this->GeneratorTarget->GetProperty("LINK_WHAT_YOU_USE"))
+    {
+    std::string cmakeCommand =
+      this->Convert(
+        cmSystemTools::GetCMakeCommand(), cmLocalGenerator::NONE,
+        cmLocalGenerator::SHELL);
+    cmakeCommand += " -E __run_iwyu --lwyu=";
+    cmakeCommand += targetOutPathReal;
+    commands1.push_back(cmakeCommand);
+    commands.insert(commands.end(), commands1.begin(), commands1.end());
+    commands1.clear();
+    }
   // Add the post-build rules when building but not when relinking.
   if (!relink) {
     this->LocalGenerator->AppendCustomCommands(

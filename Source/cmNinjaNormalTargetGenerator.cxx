@@ -483,7 +483,11 @@ void cmNinjaNormalTargetGenerator::WriteLinkStatement()
     localGen.AddLanguageFlags(t, TargetLinkLanguage, cfgName);
     vars["LANGUAGE_COMPILE_FLAGS"] = t;
   }
-
+  if(genTarget.GetProperty("LINK_WHAT_YOU_USE")) {
+    std::string t = vars["FLAGS"];
+    t += " -Wl,--no-as-needed";
+    vars["FLAGS"] = t;
+  }
   if (this->GetGeneratorTarget()->HasSOName(cfgName)) {
     vars["SONAME_FLAG"] = mf->GetSONameFlag(this->TargetLinkLanguage);
     vars["SONAME"] = this->TargetNameSO;
@@ -607,7 +611,15 @@ void cmNinjaNormalTargetGenerator::WriteLinkStatement()
     vars["POST_BUILD"] = ":";
     symlinkVars["POST_BUILD"] = postBuildCmdLine;
   }
-
+  if(genTarget.GetProperty("LINK_WHAT_YOU_USE")) {
+    std::string cmakeCommand =
+      this->GetLocalGenerator()->ConvertToOutputFormat(
+        cmSystemTools::GetCMakeCommand(), cmLocalGenerator::SHELL);
+    cmakeCommand += " -E __run_iwyu --lwyu=";
+    cmakeCommand += targetOutputReal;
+    cmakeCommand += " || true";
+    vars["POST_BUILD"] = cmakeCommand;
+  }
   cmGlobalNinjaGenerator& globalGen = *this->GetGlobalGenerator();
 
   int commandLineLengthLimit = -1;

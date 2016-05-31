@@ -368,7 +368,10 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
         }
 
         // Output the stdout from ldd -r -u to stderr
-        std::cerr <<  "Warning: " << stdOut;
+        // Warn if lwyu reported anything.
+        if (stdOut.find("Unused direct dependencies:") != stdOut.npos) {
+          std::cerr <<  "Warning: " << stdOut;
+        }
       }
       ret = 0;
       // Now run the real compiler command and return its result value.

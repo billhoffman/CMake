@@ -467,6 +467,10 @@ void cmNinjaNormalTargetGenerator::WriteLinkStatement()
   vars["MANIFESTS"] = this->GetManifests();
 
   vars["LINK_PATH"] = frameworkPath + linkPath;
+  std::string lwyuFlags;
+  if(genTarget.GetProperty("LINK_WHAT_YOU_USE")) {
+    lwyuFlags = " -Wl,--no-as-needed";
+  }
 
   // Compute architecture specific link flags.  Yes, these go into a different
   // variable for executables, probably due to a mistake made when duplicating
@@ -474,19 +478,16 @@ void cmNinjaNormalTargetGenerator::WriteLinkStatement()
   if (targetType == cmState::EXECUTABLE) {
     std::string t = vars["FLAGS"];
     localGen.AddArchitectureFlags(t, &genTarget, TargetLinkLanguage, cfgName);
+    t += lwyuFlags;
     vars["FLAGS"] = t;
   } else {
     std::string t = vars["ARCH_FLAGS"];
     localGen.AddArchitectureFlags(t, &genTarget, TargetLinkLanguage, cfgName);
     vars["ARCH_FLAGS"] = t;
     t = "";
+    t += lwyuFlags;
     localGen.AddLanguageFlags(t, TargetLinkLanguage, cfgName);
     vars["LANGUAGE_COMPILE_FLAGS"] = t;
-  }
-  if(genTarget.GetProperty("LINK_WHAT_YOU_USE")) {
-    std::string t = vars["FLAGS"];
-    t += " -Wl,--no-as-needed";
-    vars["FLAGS"] = t;
   }
   if (this->GetGeneratorTarget()->HasSOName(cfgName)) {
     vars["SONAME_FLAG"] = mf->GetSONameFlag(this->TargetLinkLanguage);

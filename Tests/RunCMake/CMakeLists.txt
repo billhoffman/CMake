@@ -308,10 +308,10 @@ endif()
 
 if("${CMAKE_GENERATOR}" MATCHES "Make|Ninja")
   find_program(LDD_PATH ldd)
-  if(LDD_PATH)
+  if(UNIX AND LDD_PATH)
     execute_process(COMMAND ${LDD_PATH} --help
       OUTPUT_VARIABLE LDD_HELP)
-    if(UNIX AND "${LDD_HELP}" MATCHES
+    if("${LDD_HELP}" MATCHES
         "(-r, --function-relocs.*process data and function relocations|-u, --unused.*print unused direct dependencies)")
       add_RunCMake_test(LinkWhatYouUse)
     endif()
